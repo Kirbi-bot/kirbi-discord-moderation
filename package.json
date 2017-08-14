@@ -1,0 +1,15 @@
+{
+	"name": "kirbi-discord-moderation",
+	"version": "0.0.1",
+	"description": "adds a collection of Discord-specific moderation commands to Kirbi",
+	"author": "Nate Richardson <hello@naterichardson.com> (https://naterichardson.com)",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/Richardson-Media-House/kirbi-discord-moderation.git"
+	},
+	"license": "Apache-2.0",
+	"dependencies": {
+		"kirbi-discord": "Richardson-Media-House/kirbi-discord"
+	},
+ 	"main": "moderation.js"
+}
