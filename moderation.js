@@ -17,7 +17,8 @@ module.exports = function (Kirbi) {
 			'ban',
 			'kick',
 			'prune',
-			'topic'
+			'topic',
+			'servers'
 		],
 		ban: {
 			usage: '<user> [days of messages to delete] [reason]',
@@ -290,6 +291,19 @@ module.exports = function (Kirbi) {
 						description: response
 					}
 				});
+			}
+		},
+		servers: {
+			usage: '<command>',
+			description: 'Returns a list of servers the bot is connected to',
+			process: (msg, suffix, isEdit, cb) => {
+				cb({
+					embed: {
+						color: Kirbi.Config.discord.defaultEmbedColor,
+						title: Kirbi.Discord.user.username,
+						description: `Currently on the following servers:\n\n${Kirbi.Discord.guilds.map(g => `${g.name} - **${g.memberCount} Members**`).join(`\n`)}`
+					}
+				}, msg);
 			}
 		}
 	};
