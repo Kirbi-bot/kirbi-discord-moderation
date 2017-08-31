@@ -1,5 +1,5 @@
 module.exports = function (Kirbi) {
-	var lastPruned = new Date().getTime() - (Kirbi.Config.discord.pruneInterval * 1000);
+	let lastPruned = new Date().getTime() - (Kirbi.Config.discord.pruneInterval * 1000);
 
 	return {
 		commands: [
@@ -37,7 +37,7 @@ module.exports = function (Kirbi) {
 						return;
 					}
 					msg.guild.fetchMember(Kirbi.resolveMention(args[0])).then(member => {
-						if (member != undefined) {
+						if (member !== undefined) {
 							if (!member.bannable) {
 								msg.channel.send({
 									embed: {
@@ -143,7 +143,7 @@ module.exports = function (Kirbi) {
 						return;
 					}
 					msg.guild.fetchMember(Kirbi.resolveMention(args[0])).then(member => {
-						if (member != undefined) {
+						if (member !== undefined) {
 							if (!member.kickable) {
 								msg.channel.send(`I can't kick ${member}. Do they have the same or a higher role than me?`);
 								return;
