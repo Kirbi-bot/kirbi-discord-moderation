@@ -1,16 +1,5 @@
 module.exports = function (Kirbi) {
 	var lastPruned = new Date().getTime() - (Kirbi.Config.discord.pruneInterval * 1000);
-	function resolveMention(usertxt) {
-		var userid = usertxt;
-		if (usertxt.startsWith('<@!')) {
-			userid = usertxt.substr(3, usertxt.length - 4);
-		} else {
-			if (usertxt.startsWith('<@')) {
-				userid = usertxt.substr(2, usertxt.length - 3);
-			}
-		}
-		return userid;
-	}
 
 	return {
 		commands: [
@@ -48,7 +37,7 @@ module.exports = function (Kirbi) {
 						return;
 					}
 		
-					msg.guild.fetchMember(resolveMention(args[0])).then(member => {
+					msg.guild.fetchMember(Kirbi.resolveMention(args[0])).then(member => {
 						if (member != undefined) {
 							if (!member.bannable) {
 								msg.channel.send({
@@ -155,7 +144,7 @@ module.exports = function (Kirbi) {
 						return;
 					}
 		
-					msg.guild.fetchMember(resolveMention(args[0])).then(member => {
+					msg.guild.fetchMember(Kirbi.resolveMention(args[0])).then(member => {
 						if (member != undefined) {
 							if (!member.kickable) {
 								msg.channel.send(`I can't kick ${member}. Do they have the same or a higher role than me?`);
