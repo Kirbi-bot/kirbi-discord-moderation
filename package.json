@@ -13,7 +13,7 @@
 		"Matt Carroll <admin@develogix.com> (https://develogix.com)",
 		"Joseph Moran III <joseph.moraniii@gmail.com> (https://josephmoran.co)"
 	],
- 	"main": "moderation.js",
+	"main": "moderation.js",
 	"dependencies": {
 		"kirbi-discord": "Richardson-Media-House/kirbi-discord"
 	},
@@ -22,10 +22,21 @@
 	},
 	"xo": {
 		"rules": {
-			"linebreak-style": ["error", "windows"],
+			"linebreak-style": [
+				"error",
+				"windows"
+			],
+			"no-negated-condition": "off",
 			"no-prototype-builtins": "warn",
 			"radix": "warn",
-			"guard-for-in": "warn"
+			"guard-for-in": "warn",
+			"object-curly-spacing": [
+				"error",
+				"always",
+				{
+					"arraysInObjects": false
+				}
+			]
 		}
 	},
 	"scripts": {
