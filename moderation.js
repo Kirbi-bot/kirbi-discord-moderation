@@ -12,8 +12,8 @@ module.exports = function (Kirbi) {
 		ban: {
 			usage: '<user> [days of messages to delete] [reason]',
 			description: 'bans the user, optionally deleting messages from them in the last x days',
-			process: function (msg, suffix) {
-				var args = suffix.split(' ');
+			process: (msg, suffix) => {
+				const args = suffix.split(' ');
 				if (args.length > 0 && args[0]) {
 					if (!msg.guild.me.hasPermission('BAN_MEMBERS')) {
 						msg.channel.send({
@@ -22,10 +22,10 @@ module.exports = function (Kirbi) {
 								description: `I don't have permission to ban people!`
 							}
 						}).then(message => message.delete(5000));
-		
+
 						return;
 					}
-		
+
 					if (!msg.member.hasPermission('BAN_MEMBERS')) {
 						msg.channel.send({
 							embed: {
@@ -33,10 +33,9 @@ module.exports = function (Kirbi) {
 								description: `You don't have permission to ban people, ${msg.member}!`
 							}
 						}).then(message => message.delete(5000));
-		
+
 						return;
 					}
-		
 					msg.guild.fetchMember(Kirbi.resolveMention(args[0])).then(member => {
 						if (member != undefined) {
 							if (!member.bannable) {
@@ -49,28 +48,28 @@ module.exports = function (Kirbi) {
 								return;
 							}
 							if (args.length > 1) {
-								if (parseInt(args[1]) !== NaN) {
+								if (!isNaN(parseInt(args[1], 10))) {
 									if (args.length > 2) {
-										let days = args[1];
-										let reason = args.slice(2).join(' ');
-										member.ban({ days: parseFloat(days), reason: reason }).then(x => {
+										const days = args[1];
+										const reason = args.slice(2).join(' ');
+										member.ban({ days: parseFloat(days), reason }).then(() => {
 											msg.channel.send({
 												embed: {
 													color: Kirbi.Config.discord.defaultEmbedColor,
 													description: `Banning ${member} from ${msg.guild} for ${reason}!`
 												}
 											});
-										}).catch(err => msg.channel.send({
+										}).catch(() => msg.channel.send({
 											embed: {
 												color: Kirbi.Config.discord.defaultEmbedColor,
 												description: `Banning ${member} from ${msg.guild} failed!`
 											}
 										}));
 									} else {
-										let days = args[1];
-										member.ban({ days: parseFloat(days) }).then(x => {
+										const days = args[1];
+										member.ban({ days: parseFloat(days) }).then(() => {
 											msg.channel.send(`Banning ${member} from ${msg.guild}!`);
-										}).catch(err => msg.channel.send({
+										}).catch(() => msg.channel.send({
 											embed: {
 												color: Kirbi.Config.discord.defaultEmbedColor,
 												description: `Banning ${member} from ${msg.guild} failed!`
@@ -78,15 +77,15 @@ module.exports = function (Kirbi) {
 										}));
 									}
 								} else {
-									let reason = args.slice(1).join(' ');
-									member.ban({ reason: reason }).then(x => {
+									const reason = args.slice(1).join(' ');
+									member.ban({ reason }).then(() => {
 										msg.channel.send({
 											embed: {
 												color: Kirbi.Config.discord.defaultEmbedColor,
 												description: `Banning ${member} from ${msg.guild} for ${reason}!`
 											}
 										});
-									}).catch(err => msg.channel.send({
+									}).catch(() => msg.channel.send({
 										embed: {
 											color: Kirbi.Config.discord.defaultEmbedColor,
 											description: `Banning ${member} from ${msg.guild} failed!`
@@ -94,9 +93,9 @@ module.exports = function (Kirbi) {
 									}));
 								}
 							} else {
-								member.ban().then(x => {
+								member.ban().then(() => {
 									msg.channel.send(`Banning ${member} from ${msg.guild}!`);
-								}).catch(err => msg.channel.send({
+								}).catch(() => msg.channel.send({
 									embed: {
 										color: Kirbi.Config.discord.defaultEmbedColor,
 										description: `Banning ${member} from ${msg.guild} failed!`
@@ -112,15 +111,15 @@ module.exports = function (Kirbi) {
 							description: 'You must specify a user to ban.'
 						}
 					});
-				};
+				}
 			}
 		},
 		kick: {
 			usage: '<user> [reason]',
 			description: 'Kick a user with an optional reason. Requires both the command user and the bot to have kick permission',
 			process: (msg, suffix) => {
-				let args = suffix.split(' ');
-		
+				const args = suffix.split(' ');
+
 				if (args.length > 0 && args[0]) {
 					if (!msg.guild.me.hasPermission('KICK_MEMBERS')) {
 						msg.channel.send({
@@ -129,10 +128,10 @@ module.exports = function (Kirbi) {
 								description: `I don't have permission to kick people!`
 							}
 						}).then(message => message.delete(5000));
-		
+
 						return;
 					}
-		
+
 					if (!msg.member.hasPermission('KICK_MEMBERS')) {
 						msg.channel.send({
 							embed: {
@@ -140,10 +139,9 @@ module.exports = function (Kirbi) {
 								description: `I don't have permission to kick people, ${msg.member}!`
 							}
 						}).then(message => message.delete(5000));
-		
+
 						return;
 					}
-		
 					msg.guild.fetchMember(Kirbi.resolveMention(args[0])).then(member => {
 						if (member != undefined) {
 							if (!member.kickable) {
@@ -151,24 +149,24 @@ module.exports = function (Kirbi) {
 								return;
 							}
 							if (args.length > 1) {
-								let reason = args.slice(1).join(' ');
-								member.kick().then(x => {
+								const reason = args.slice(1).join(' ');
+								member.kick().then(() => {
 									msg.channel.send({
 										embed: {
 											color: Kirbi.Config.discord.defaultEmbedColor,
 											description: `Kicking ${member} from ${msg.guild} for ${reason}!`
 										}
-									})
-								}).catch(err => msg.channel.send(`Kicking ${member} failed!`));
+									});
+								}).catch(() => msg.channel.send(`Kicking ${member} failed!`));
 							} else {
-								member.kick().then(x => {
+								member.kick().then(() => {
 									msg.channel.send({
 										embed: {
 											color: Kirbi.Config.discord.defaultEmbedColor,
 											description: `Kicking ${member} from ${msg.guild}!`
 										}
-									})
-								}).catch(err => msg.channel.send({
+									});
+								}).catch(() => msg.channel.send({
 									embed: {
 										color: Kirbi.Config.discord.defaultEmbedColor,
 										description: `Kicking ${member} failed!`
@@ -199,10 +197,10 @@ module.exports = function (Kirbi) {
 							description: 'You must specify a number of messages to prune.'
 						}
 					}).then(message => message.delete(5000));
-		
+
 					return;
 				}
-		
+
 				if (!msg.guild.me.hasPermission('MANAGE_MESSAGES')) {
 					msg.channel.send({
 						embed: {
@@ -210,10 +208,10 @@ module.exports = function (Kirbi) {
 							description: `I can't prune messages, ${msg.member}...`
 						}
 					}).then(message => message.delete(5000));
-		
+
 					return;
 				}
-		
+
 				if (!msg.member.hasPermission('MANAGE_MESSAGES')) {
 					msg.channel.send({
 						embed: {
@@ -221,30 +219,33 @@ module.exports = function (Kirbi) {
 							description: `You can't prune messages, ${msg.member}...`
 						}
 					}).then(message => message.delete(5000));
-		
+
 					return;
 				}
-		
-				var timeSinceLastPrune = Math.floor(new Date().getTime() - lastPruned);
-		
+
+				const timeSinceLastPrune = Math.floor(new Date().getTime() - lastPruned);
+
 				if (timeSinceLastPrune > (Kirbi.Config.discord.pruneInterval * 1000)) {
-		
-					if (parseInt(suffix) !== NaN) {
-						var count = parseInt(suffix);
+					if (!isNaN(parseInt(suffix, 10))) {
+						let count = parseInt(suffix, 10);
+
 						count++;
-						if (count > Kirbi.Config.discord.pruneMax) count = Kirbi.Config.discord.pruneMax;
-		
+
+						if (count > Kirbi.Config.discord.pruneMax) {
+							count = Kirbi.Config.discord.pruneMax;
+						}
+
 						msg.channel.fetchMessages({ limit: count })
-							.then(messages => messages.map(m => m.delete().catch(err => {})))
-							.then(function () {
+							.then(messages => messages.map(m => m.delete().catch(() => { })))
+							.then(() => {
 								msg.channel.send({
 									embed: {
 										color: Kirbi.Config.discord.defaultEmbedColor,
 										description: `Pruning ${(count === 100) ? 100 : count - 1} messages...`
 									}
-								}).then(message => message.delete(5000).catch(err => {}));
+								}).then(message => message.delete(5000).catch(() => { }));
 							});
-		
+
 						lastPruned = new Date().getTime();
 					} else {
 						msg.channel.send({
@@ -255,7 +256,7 @@ module.exports = function (Kirbi) {
 						}).then(message => message.delete(5000));
 					}
 				} else {
-					var wait = Math.floor(Kirbi.Config.discord.pruneInterval - (timeSinceLastPrune / 1000));
+					const wait = Math.floor(Kirbi.Config.discord.pruneInterval - (timeSinceLastPrune / 1000));
 					msg.channel.send({
 						embed: {
 							color: Kirbi.Config.discord.defaultEmbedColor,
@@ -267,12 +268,12 @@ module.exports = function (Kirbi) {
 		},
 		topic: {
 			description: 'Shows the purpose of the chat channel',
-			process: (msg, suffix) => {
-				response = msg.channel.topic;
+			process: msg => {
+				let response = msg.channel.topic;
 				if (msg.channel.topic.trim() === '') {
-					response = `There doesn't seem to be a topic for this channel. Maybe ask the mods?`
+					response = `There doesn't seem to be a topic for this channel. Maybe ask the mods?`;
 				}
-				
+
 				msg.channel.send({
 					embed: {
 						color: Kirbi.Config.discord.defaultEmbedColor,
