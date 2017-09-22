@@ -150,7 +150,7 @@ module.exports = function (Kirbi) {
 							}
 							if (args.length > 1) {
 								const reason = args.slice(1).join(' ');
-								member.kick().then(() => {
+								member.kick(reason).then(() => {
 									msg.channel.send({
 										embed: {
 											color: Kirbi.Config.discord.defaultEmbedColor,
