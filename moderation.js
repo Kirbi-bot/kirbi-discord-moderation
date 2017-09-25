@@ -37,24 +37,49 @@ module.exports = function (Kirbi) {
 						return;
 					}
 
-					const member = Kirbi.Discord.Client.fetchMember(args[0]);
-
-					if (member !== undefined) {
-						if (!member.bannable) {
-							msg.channel.send({
-								embed: {
-									color: Kirbi.Config.discord.defaultEmbedColor,
-									description: `I can't ban ${member}. Do they have the same or a higher role than me?`
-								}
-							}).then(message => message.delete(5000));
-							return;
-						}
-						if (args.length > 1) {
-							if (!isNaN(parseInt(args[1], 10))) {
-								if (args.length > 2) {
-									const days = args[1];
-									const reason = args.slice(2).join(' ');
-									msg.guild.ban(member, { days: parseFloat(days), reason }).then(() => {
+					Kirbi.Discord.fetchUser(Kirbi.resolveMention(args[0])).then(member => {
+						if (member !== undefined) {
+							if (msg.mentions.members.first() === member && !member.bannable) {
+								msg.channel.send({
+									embed: {
+										color: Kirbi.Config.discord.defaultEmbedColor,
+										description: `I can't ban ${member}. Do they have the same or a higher role than me?`
+									}
+								}).then(message => message.delete(5000));
+								return;
+							}
+							if (args.length > 1) {
+								if (!isNaN(parseInt(args[1], 10))) {
+									if (args.length > 2) {
+										const days = args[1];
+										const reason = args.slice(2).join(' ');
+										msg.guild.ban(member, { days: parseFloat(days), reason }).then(() => {
+											msg.channel.send({
+												embed: {
+													color: Kirbi.Config.discord.defaultEmbedColor,
+													description: `Banning ${member} from ${msg.guild} for ${reason}!`
+												}
+											});
+										}).catch(() => msg.channel.send({
+											embed: {
+												color: Kirbi.Config.discord.defaultEmbedColor,
+												description: `Banning ${member} from ${msg.guild} failed!`
+											}
+										}));
+									} else {
+										const days = args[1];
+										msg.guild.ban(member, { days: parseFloat(days) }).then(() => {
+											msg.channel.send(`Banning ${member} from ${msg.guild}!`);
+										}).catch(() => msg.channel.send({
+											embed: {
+												color: Kirbi.Config.discord.defaultEmbedColor,
+												description: `Banning ${member} from ${msg.guild} failed!`
+											}
+										}));
+									}
+								} else {
+									const reason = args.slice(1).join(' ');
+									msg.guild.ban(member, { reason }).then(() => {
 										msg.channel.send({
 											embed: {
 												color: Kirbi.Config.discord.defaultEmbedColor,
@@ -67,24 +92,13 @@ module.exports = function (Kirbi) {
 											description: `Banning ${member} from ${msg.guild} failed!`
 										}
 									}));
-								} else {
-									const days = args[1];
-									msg.guild.ban(member, { days: parseFloat(days) }).then(() => {
-										msg.channel.send(`Banning ${member} from ${msg.guild}!`);
-									}).catch(() => msg.channel.send({
-										embed: {
-											color: Kirbi.Config.discord.defaultEmbedColor,
-											description: `Banning ${member} from ${msg.guild} failed!`
-										}
-									}));
 								}
 							} else {
-								const reason = args.slice(1).join(' ');
-								msg.guild.ban(member, { reason }).then(() => {
+								msg.guild.ban(member).then(() => {
 									msg.channel.send({
 										embed: {
 											color: Kirbi.Config.discord.defaultEmbedColor,
-											description: `Banning ${member} from ${msg.guild} for ${reason}!`
+											description: `Banning ${member} from ${msg.guild}!`
 										}
 									});
 								}).catch(() => msg.channel.send({
@@ -94,22 +108,9 @@ module.exports = function (Kirbi) {
 									}
 								}));
 							}
-						} else {
-							msg.guild.ban(member).then(() => {
-								msg.channel.send({
-									embed: {
-										color: Kirbi.Config.discord.defaultEmbedColor,
-										description: `Banning ${member} from ${msg.guild}!`
-									}
-								});
-							}).catch(() => msg.channel.send({
-								embed: {
-									color: Kirbi.Config.discord.defaultEmbedColor,
-									description: `Banning ${member} from ${msg.guild} failed!`
-								}
-							}));
 						}
-					}
+
+					}).catch(console.error);
 				} else {
 					msg.channel.send({
 						embed: {
