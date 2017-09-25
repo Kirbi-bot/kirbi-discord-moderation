@@ -10,7 +10,7 @@ module.exports = function (Kirbi) {
 			'servers'
 		],
 		ban: {
-			usage: '<user>[reason]',
+			usage: '<user> [days of messages to delete] [reason]',
 			description: 'bans the user, optionally deleting messages from them in the last x days',
 			process: (msg, suffix) => {
 				const args = suffix.split(' ');
