@@ -109,7 +109,6 @@ module.exports = function (Kirbi) {
 								}));
 							}
 						}
-
 					}).catch(console.error);
 				} else {
 					msg.channel.send({
