@@ -103,6 +103,13 @@ module.exports = function (Kirbi) {
 								}));
 							}
 						}
+					}).catch(() => {
+						msg.channel.send({
+							embed: {
+								color: Kirbi.Config.discord.defaultEmbedColor,
+								description: `Cannot find a user by the nickname of ${args[0]}. Try using their snowflake.`
+							}
+						});
 					});
 				} else {
 					msg.channel.send({
