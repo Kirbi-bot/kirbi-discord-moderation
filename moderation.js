@@ -10,7 +10,7 @@ module.exports = function (Kirbi) {
 			'servers'
 		],
 		ban: {
-			usage: '<user> [days of messages to delete] [reason]',
+			usage: '<user>[reason]',
 			description: 'bans the user, optionally deleting messages from them in the last x days',
 			process: (msg, suffix) => {
 				const args = suffix.split(' ');
@@ -36,9 +36,10 @@ module.exports = function (Kirbi) {
 
 						return;
 					}
-					msg.guild.fetchMember(Kirbi.resolveMention(args[0])).then(member => {
+
+					Kirbi.Discord.fetchUser(Kirbi.resolveMention(args[0])).then(member => {
 						if (member !== undefined) {
-							if (!member.bannable) {
+							if (msg.mentions.members.first() === member && !member.bannable) {
 								msg.channel.send({
 									embed: {
 										color: Kirbi.Config.discord.defaultEmbedColor,
@@ -52,7 +53,7 @@ module.exports = function (Kirbi) {
 									if (args.length > 2) {
 										const days = args[1];
 										const reason = args.slice(2).join(' ');
-										member.ban({ days: parseFloat(days), reason }).then(() => {
+										msg.guild.ban(member, { days: parseFloat(days), reason }).then(() => {
 											msg.channel.send({
 												embed: {
 													color: Kirbi.Config.discord.defaultEmbedColor,
@@ -67,7 +68,7 @@ module.exports = function (Kirbi) {
 										}));
 									} else {
 										const days = args[1];
-										member.ban({ days: parseFloat(days) }).then(() => {
+										msg.guild.ban(member, { days: parseFloat(days) }).then(() => {
 											msg.channel.send(`Banning ${member} from ${msg.guild}!`);
 										}).catch(() => msg.channel.send({
 											embed: {
@@ -78,7 +79,7 @@ module.exports = function (Kirbi) {
 									}
 								} else {
 									const reason = args.slice(1).join(' ');
-									member.ban({ reason }).then(() => {
+									msg.guild.ban(member, { reason }).then(() => {
 										msg.channel.send({
 											embed: {
 												color: Kirbi.Config.discord.defaultEmbedColor,
@@ -93,8 +94,13 @@ module.exports = function (Kirbi) {
 									}));
 								}
 							} else {
-								member.ban().then(() => {
-									msg.channel.send(`Banning ${member} from ${msg.guild}!`);
+								msg.guild.ban(member).then(() => {
+									msg.channel.send({
+										embed: {
+											color: Kirbi.Config.discord.defaultEmbedColor,
+											description: `Banning ${member} from ${msg.guild}!`
+										}
+									});
 								}).catch(() => msg.channel.send({
 									embed: {
 										color: Kirbi.Config.discord.defaultEmbedColor,
@@ -149,41 +155,47 @@ module.exports = function (Kirbi) {
 
 						return;
 					}
-					msg.guild.fetchMember(Kirbi.resolveMention(args[0])).then(member => {
-						if (member !== undefined) {
-							if (!member.kickable) {
-								msg.channel.send(`I can't kick ${member}. Do they have the same or a higher role than me?`);
-								return;
-							}
-							if (args.length > 1) {
-								const reason = args.slice(1).join(' ');
-								member.kick().then(() => {
-									msg.channel.send({
-										embed: {
-											color: Kirbi.Config.discord.defaultEmbedColor,
-											description: `Kicking ${member} from ${msg.guild} for ${reason}!`
-										}
-									});
-								}).catch(() => msg.channel.send(`Kicking ${member} failed!`));
-							} else {
-								member.kick().then(() => {
-									msg.channel.send({
-										embed: {
-											color: Kirbi.Config.discord.defaultEmbedColor,
-											description: `Kicking ${member} from ${msg.guild}!`
-										}
-									});
-								}).catch(() => msg.channel.send({
+
+					const member = msg.mentions.members.first();
+
+					if (member !== undefined) {
+						if (!member.kickable) {
+							msg.channel.send(`I can't kick ${member}. Do they have the same or a higher role than me?`);
+							return;
+						}
+						if (args.length > 1) {
+							const reason = args.slice(1).join(' ');
+							member.kick(reason).then(() => {
+								msg.channel.send({
 									embed: {
 										color: Kirbi.Config.discord.defaultEmbedColor,
-										description: `Kicking ${member} failed!`
+										description: `Kicking ${member} from ${msg.guild} for ${reason}!`
 									}
-								}).then(message => message.delete(5000)));
-							}
+								});
+							}).catch(() => msg.channel.send(`Kicking ${member} failed!`));
 						} else {
-							msg.channel.send(`I couldn't find a user ${args[0]}`);
+							member.kick().then(() => {
+								msg.channel.send({
+									embed: {
+										color: Kirbi.Config.discord.defaultEmbedColor,
+										description: `Kicking ${member} from ${msg.guild}!`
+									}
+								});
+							}).catch(() => msg.channel.send({
+								embed: {
+									color: Kirbi.Config.discord.defaultEmbedColor,
+									description: `Kicking ${member} failed!`
+								}
+							}).then(message => message.delete(5000)));
 						}
-					});
+					} else {
+						msg.channel.send({
+							embed: {
+								color: Kirbi.Config.discord.defaultEmbedColor,
+								description: `I couldn't find a user ${args[0]}`
+							}
+						});
+					}
 				} else {
 					msg.channel.send({
 						embed: {
