@@ -1,4 +1,4 @@
-module.exports = function (Kirbi) {
+module.exports = Kirbi => {
 	let lastPruned = new Date().getTime() - (Kirbi.Config.discord.pruneInterval * 1000);
 
 	return {
@@ -305,14 +305,15 @@ module.exports = function (Kirbi) {
 		servers: {
 			usage: '<command>',
 			description: 'Returns a list of servers the bot is connected to',
-			process: (msg, suffix, isEdit, cb) => {
-				cb({
+			process: msg => {
+				console.log(msg);
+				msg.channel.send({
 					embed: {
 						color: Kirbi.Config.discord.defaultEmbedColor,
 						title: Kirbi.Discord.user.username,
 						description: `Currently on the following servers:\n\n${Kirbi.Discord.guilds.map(g => `${g.name} - **${g.memberCount} Members**`).join(`\n`)}`
 					}
-				}, msg);
+				});
 			}
 		}
 	};
