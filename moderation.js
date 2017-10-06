@@ -306,7 +306,6 @@ module.exports = Kirbi => {
 			usage: '<command>',
 			description: 'Returns a list of servers the bot is connected to',
 			process: msg => {
-				console.log(msg);
 				msg.channel.send({
 					embed: {
 						color: Kirbi.Config.discord.defaultEmbedColor,
